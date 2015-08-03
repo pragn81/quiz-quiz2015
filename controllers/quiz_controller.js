@@ -11,7 +11,7 @@ exports.question = function (req, res){
 //get quizes/answer
 exports.answer = function(req, res) {
 	models.Quiz.findAll().success(function(quiz){
-	    if (req.query.respuesta.toLowerCase()== quiz[0].respuesta){
+        if (req.query.respuesta.toLowerCase()== quiz[0].respuesta.toLowerCase()){
 	        res.render('quizes/answer', {respuesta: 'Correcto'});
 	    }
 	    else {
