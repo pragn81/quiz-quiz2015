@@ -16,8 +16,14 @@ exports.load = function(req, res, next, quizId){
 
 //get quizes
 exports.index = function (req, res){
-	models.Quiz.findAll().then(function(quizes){
-		res.render('quizes/index', {quizes: quizes});	
+	var search="%";
+	if(req.query.search && req.query.search.trim().length){
+		search=req.query.search.replace(/\s/g,"%");
+		search="%"+search+"%";
+		search=search.toLowerCase();
+	}
+	models.Quiz.findAll({where: ["LOWER(pregunta) like ?", search],order:"pregunta"}).then(function(quizes){
+		res.render('quizes/index', {quizes: quizes,search: req.query.search});	
 	}).catch(function (error){next(error);});
 };
 
@@ -32,7 +38,7 @@ exports.show = function (req, res){
 exports.answer = function(req, res) {
 	var resultado = 'Incorrecto';
 	if (req.query.respuesta.toLowerCase()== req.quiz.respuesta.toLowerCase()){
-	        resultado: 'Correcto';
+	        resultado = 'Correcto';
 	    }
 	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado});
 };

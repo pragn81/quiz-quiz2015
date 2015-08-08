@@ -1,5 +1,22 @@
+<form method="get" action="/quizes/">
+	<h3>Filtrar preguntas por texto</h3>
+	<input type="text" name="search" placeholder="Escriba aqui">
+	<input type="submit" value="Enviar">
+</form>
+
+<p>Filtro Actual:
+	<% if (search) { 
+		 search
+		} else { %>
+		Vacio
+	<% } %>
+</p>	
+
 <table>
-<% var i; for (i=0; i < quizes.length; i++) { %>
-	<tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr> 
-<% } %>
+<% if (quizes.length == 0) { %>
+	<tr><td>Ninguna pregunta cumple el criterio de búsqueda. Prueba a realizar otra búsqueda</td></tr>
+<% } else {
+	var i; for (i=0; i < quizes.length; i++) { %>
+	<tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr>
+<% } } %>
 </table>
