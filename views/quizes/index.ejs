@@ -6,7 +6,7 @@
 
 <p>Filtro Actual:
 	<% if (search) { 
-		 search
+		search 
 		} else { %>
 		Vacio
 	<% } %>
@@ -20,3 +20,4 @@
 	<tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr>
 <% } } %>
 </table>
+<h4><a href="/quizes/new">Crear pregunta</a></h4>
