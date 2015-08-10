@@ -16,7 +16,7 @@ exports.load = function(req, res, next, quizId){
 		}).catch(function (error){next(error);});
 };
 
-//get quizes
+//GET quizes
 exports.index = function (req, res){
 	var search="%";
 	if(req.query.search && req.query.search.trim().length){
@@ -31,12 +31,12 @@ exports.index = function (req, res){
 	}).catch(function (error){next(error);});
 };
 
-//get quizes/:id
+//GET quizes/:id
 exports.show = function (req, res){
 	res.render('quizes/show', {quiz: req.quiz, errors: []});	
 };
 
-//get quizes/:id/answer
+//GET quizes/:id/answer
 exports.answer = function(req, res) {
 	var resultado = 'Incorrecto';
 	if (req.query.respuesta.toLowerCase()== req.quiz.respuesta.toLowerCase()){
@@ -45,13 +45,31 @@ exports.answer = function(req, res) {
 	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado, errors: []});
 };
 
-//get quizes/new
+//GET quizes/new
 exports.new =  function (req, res) {
 	var quiz = models.Quiz.build({pregunta: "Pregunta", respuesta: "Respuesta"});
 	res.render('quizes/new', {quiz: quiz, errors: []});
 };
 
-//post quizes/create
+//POST quizes/create
+exports.create = function(req, res) {
+	var quiz = models.Quiz.build( req.body.quiz );
+  	quiz
+  	.validate()
+  	.then(
+    	function(err){
+			if (err) {
+				res.render('quizes/new', {quiz: quiz, errors: err.errors});
+			} else {
+				quiz 
+				.save({fields: ["pregunta", "respuesta"]})
+				.then( function(){ res.redirect('/quizes')}) 
+    		}
+  		});
+	};
+
+//Version alternativa
+/*
 exports.create = function (req,res){
 	var quiz = models.Quiz.build(req.body.quiz);
 	var errors = quiz.validate();
@@ -65,7 +83,38 @@ exports.create = function (req,res){
 	}
 	else {
 		quiz
+		.save({fields: ["pregunta","respuesta"]})
+		.then(function (){res.redirect('/quizes')});
+	}
+};
+*/
+//GET /quizes/:quizId/edit
+exports.edit = function (req,res){
+	var quiz = req.quiz; //autoload de instancia de quiz
+	res.render('quizes/edit', {quiz: quiz, errors: []});
+};
+
+//PUT /quizes/:quizId  
+exports.update = function (req,res){
+	req.quiz.pregunta = req.body.quiz.pregunta;
+	req.quiz.respuesta = req.body.quiz.respuesta;
+	req.quiz
+	.validate()
+	.then(function(err){
+		if(err){
+			res.render('quizes/edit', {quiz:req.quiz, errors: err.errors});
+		} else {
+			req.quiz
 			.save({fields: ["pregunta","respuesta"]})
 			.then(function (){res.redirect('/quizes')});
-	}
+		}
+	})
+};
+
+//DELETE /quizes/:quizId  
+exports.destroy = function (req,res){
+	req.quiz.destroy()
+	.then(function(){
+		res.redirect('/quizes');})
+	.catch(function(error){next(error)});
 };
