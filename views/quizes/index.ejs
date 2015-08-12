@@ -20,10 +20,14 @@
 	<tr>
 		<td class="capitalize"><%= quizes[i].tema %>&nbsp;</td>
 		<td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+		<% if (session.user) { %>
 		<td><a href="/quizes/<%= quizes[i].id %>/edit"><button type="button">Editar</button></a></td>
 		<td><form method="post" action="quizes/<%= quizes[i].id %>?_method=delete">
 		<button type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>')">Borrar</button></a></form></td>
+		<% } %>
 	</tr>
 <% } } %>
 </table>
+<% if (session.user) { %>
 <h4><a href="/quizes/new">Crear pregunta</a></h4>
+<% } %>
