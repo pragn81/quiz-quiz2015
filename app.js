@@ -9,6 +9,7 @@ var methodOverride = require('method-override');
 var session = require('express-session');
 
 var routes = require('./routes/index');
+var sessionController = require('./controllers/session_controller');
 
 var app = express();
 
@@ -21,9 +22,10 @@ app.use(partials());
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser('Quiz 2015'));
-app.use(session());
+//app.use(session({secret: 'Quiz 2015', cookie: { maxAge: 1200000 }, resave: true, saveUninitialized: true }));
+app.use(session({secret: 'Quiz 2015'}));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -35,6 +37,12 @@ app.use(function(req, res, next) {
   }
   // Hacer visible req.session en las vistas
   res.locals.session = req.session;
+  next();
+});
+
+
+app.use(function(req, res, next){
+  sessionController.checkTimeout(req, res);
   next();
 });
 
